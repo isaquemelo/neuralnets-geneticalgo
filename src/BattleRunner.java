@@ -34,6 +34,7 @@ public class BattleRunner {
         Robot robot = new Robot();
         robot.compile();
 
+
         RobotSpecification[] selectedBots = engine.getLocalRepository( "Robot*, Robot*, Robot*, Robot*");
         BattleSpecification battleSpec = new BattleSpecification(2, battlefield, selectedBots);
         BattleObserver observer = new BattleObserver();
@@ -41,6 +42,7 @@ public class BattleRunner {
         engine.addBattleListener(observer);
 
         engine.runBattle(battleSpec, true);
+        engine.setVisible(false);
 
         results = observer.getResults()[0];
         System.out.println(results.getTeamLeaderName());

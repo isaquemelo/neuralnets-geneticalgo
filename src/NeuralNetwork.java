@@ -80,7 +80,6 @@ public class NeuralNetwork {
 }
 
 class sigmoid implements Function{
-    @Override
     public double resultReturn(double element) {
         return 1 / (1 + Math.exp(-element));
     }
