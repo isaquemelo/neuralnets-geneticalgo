@@ -1,70 +1,71 @@
-import robocode.BattleResults;
-import robocode.control.BattleSpecification;
-import robocode.control.BattlefieldSpecification;
-import robocode.control.RobocodeEngine;
-import robocode.control.RobotSpecification;
-import robocode.control.events.BattleAdaptor;
-import robocode.control.events.BattleCompletedEvent;
-import robocode.control.events.BattleErrorEvent;
+import robocode.control.*;
+import robocode.control.events.*;
 
+//
+// Application that demonstrates how to run two sample robots in Robocode using the
+// RobocodeEngine from the robocode.control package.
+//
+// @author Flemming N. Larsen
+//
 public class BattleRunner {
-    RobocodeEngine engine;
-    BattlefieldSpecification battlefield;
 
-    public BattleRunner() {
-        engine = new RobocodeEngine(new java.io.File("C:/Robocode"));
+    public static void main(String[] args) {
+
+        // Disable log messages from Robocode
+        RobocodeEngine.setLogMessagesEnabled(false);
+
+        // Create the RobocodeEngine
+        //   RobocodeEngine engine = new RobocodeEngine(); // Run from current working directory
+        RobocodeEngine engine = new RobocodeEngine(new java.io.File("/home/isaque/robocode")); // Run from C:/Robocode
+
+        // Add our own battle listener to the RobocodeEngine
+        engine.addBattleListener(new BattleObserver());
+
+        // Show the Robocode battle view
         engine.setVisible(true);
-        battlefield = new BattlefieldSpecification(800, 600);
 
-        String[] rivalsBatch1 = {
-                //"sample.SuperCrazy",
-                //"sample.SuperTracker"
-                //"sample.SuperTrackFire",
-                "sample.SuperRamFire",
-                //"ary.micro.Weak 1.2"
-                //"sheldor.nano.Sabreur_1.1.1"
-                //"sample.Sabreur"
-                //"mld.LittleBlackBook_1.69e"
-                //"mld.Moebius_2.9.3"
-        };
+        // Setup the battle specification
 
-        BattleResults results;
+        int numberOfRounds = 5;
+        BattlefieldSpecification battlefield = new BattlefieldSpecification(800, 600); // 800x600
+        RobotSpecification[] selectedRobots = engine.getLocalRepository("sample.RamFire,sample.Corners");
 
+        BattleSpecification battleSpec = new BattleSpecification(numberOfRounds, battlefield, selectedRobots);
 
-        Robot robot = new Robot();
-        robot.compile();
+        // Run our specified battle and let it run till it is over
+        engine.runBattle(battleSpec, true); // waits till the battle finishes
 
+        // Cleanup our RobocodeEngine
+        engine.close();
 
-        RobotSpecification[] selectedBots = engine.getLocalRepository( "Robot*, Robot*, Robot*, Robot*");
-        BattleSpecification battleSpec = new BattleSpecification(2, battlefield, selectedBots);
-        BattleObserver observer = new BattleObserver();
-
-        engine.addBattleListener(observer);
-
-        engine.runBattle(battleSpec, true);
-        engine.setVisible(false);
-
-        results = observer.getResults()[0];
-        System.out.println(results.getTeamLeaderName());
-
+        // Make sure that the Java VM is shut down properly
+        System.exit(0);
     }
 }
 
-
+//
+// Our private battle listener for handling the battle event we are interested in.
+//
 class BattleObserver extends BattleAdaptor {
 
-    robocode.BattleResults[] results;
+    // Called when the battle is completed successfully with battle results
+    public void onBattleCompleted(BattleCompletedEvent e) {
+        System.out.println("-- Battle has completed --");
 
-    public void onBattleCompleted(BattleCompletedEvent e){
-        results = e.getIndexedResults();
+        // Print out the sorted results with the robot names
+        System.out.println("Battle results:");
+        for (robocode.BattleResults result : e.getSortedResults()) {
+            System.out.println("  " + result.getTeamLeaderName() + ": " + result.getScore());
+        }
     }
 
-    public void onBattleError(BattleErrorEvent e){
-        System.out.println("Error running battle: " + e.getError());
+    // Called when the game sends out an information message during the battle
+    public void onBattleMessage(BattleMessageEvent e) {
+        System.out.println("Msg> " + e.getMessage());
     }
 
-    public BattleResults[] getResults(){
-        return results;
+    // Called when the game sends out an error message during the battle
+    public void onBattleError(BattleErrorEvent e) {
+        System.out.println("Err> " + e.getError());
     }
-
 }

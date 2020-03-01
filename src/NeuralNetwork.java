@@ -31,7 +31,7 @@ public class NeuralNetwork {
 
     }
 
-    Matrix predict(double[][] input_array) {
+    Matrix predict(double[] input_array) {
         // Generating the Hidden Outputs
         Matrix inputs = Matrix.fromArray(input_array);
         Matrix hidden = Matrix.multiply(this.weights_ih, inputs);

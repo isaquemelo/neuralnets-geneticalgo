@@ -22,14 +22,10 @@ public class Matrix {
         return m;
     }
 
-    public static Matrix fromArray(double[][] arr) {
+    public static Matrix fromArray(double[] arr) {
         Matrix m = new Matrix(arr.length, 1);
 
-        for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr.length; j++) {
-                m.data[i][j] = arr[i][j];
-            }
-        }
+        for (int i = 0; i < arr.length; i++) m.data[i][0] = arr[i];
 
         return m;
     }
@@ -136,6 +132,10 @@ public class Matrix {
 
         return matrix;
 
+    }
+
+    public double[][] getData() {
+        return data;
     }
 
     @Override
