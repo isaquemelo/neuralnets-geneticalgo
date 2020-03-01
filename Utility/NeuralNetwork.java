@@ -1,8 +1,12 @@
 package SmartRobots.Utility;
 
-import java.util.LinkedList;
+import com.sun.javafx.stage.FocusUngrabEvent;
 
-public class NeuralNetwork {
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Random;
+
+public class NeuralNetwork implements Serializable {
     private int input_nodes;
     private int output_nodes;
     private int hidden_nodes;
@@ -109,27 +113,42 @@ public class NeuralNetwork {
     }
 
     // Accept an arbitrary function for mutation
-    void mutate(Function func) {
+    public void mutate(Function func) {
         this.weights_ih.map(func);
         this.weights_ho.map(func);
         this.bias_h.map(func);
         this.bias_o.map(func);
     }
 
+    public void mutate() {
+        for (int i = 0; i < this.hidden_layers_qnt; i++) {
+            this.weights_hidden.get(i).map(new randomGuassian());
+            this.biases_hidden.get(i).map(new randomGuassian());
+        }
+
+    }
+
 }
 
-class tang implements Function{
+class tang implements Function, Serializable{
     @Override
     public double resultReturn(double element) {
         return Math.tanh(element);
     }
 }
 
-class sigmoid implements Function{
+class sigmoid implements Function, Serializable{
     public double resultReturn(double element) {
         return 1 / (1 + Math.exp(-element));
     }
 }
 
+class randomGuassian implements Function, Serializable{
+    @Override
+    public double resultReturn(double element) {
+        Random r = new Random();
+        return Math.random() > 0.5? r.nextGaussian() : Math.random();
+    }
+}
 
 

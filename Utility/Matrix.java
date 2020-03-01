@@ -1,11 +1,12 @@
 package SmartRobots.Utility;
 
 import java.io.InvalidObjectException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
 
-public class Matrix {
+public class Matrix implements Serializable {
 
     private int cols;
     private int rows;
